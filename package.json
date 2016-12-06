@@ -11,7 +11,8 @@
     "twiiter"
   ],
   "dependencies": {
-    "twit": "2.2.5"
+    "twit": "2.2.5",
+    "nodemailer": "2.6.4"
   },
   "author": "Gokul Kathirvel (@_gokatz)",
   "license": "MIT"
