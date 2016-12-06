@@ -2,24 +2,28 @@ var twit = require('twit');
 var config = require('./config');
 var nodemailer = require('nodemailer');
 
-// create reusable transporter object using the default SMTP transport
-var transporter = nodemailer.createTransport('smtps://emailbotpersonal%40gmail.com:purusoth9@smtp.gmail.com');
-var Twitter = twit(config);
+// create reusable transporter object using the default SMTP transport. Using gmail can help us out in many things.
+var botEmail = '...'; //user name part of email, ie., john for <john@gmail.com> | this must ba a gmail or mailerArgs will be reconstructed
+var botPass = '...'; // password for <john@gmail.com>
 
+var toMail = 'user_+name, user@mail.com'; // to mail address, eg: 'Abraham bran, abraham@yahoo.com'
+var mailerArgs = 'smtps://'+botEmail+'%40gmail.com:'+botPass+'@smtp.gmail.com';
+var transporter = nodemailer.createTransport(mailerArgs);
+
+var Twitter = twit(config);
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
-    from: '"Email Bot (Twigo)" <emailbotpersonal@gmail.com>', // sender address
-    to: 'gokul kathirvel, gokulkathirvel@live.com' // list of receivers
+    from: '"Email Bot (Twigo)" <'+botEmail+'@gmail.com>', // sender address
+    to: toMail // list of receivers
 };
 
-//query params to query the tweets
+//query params to query the tweets. Change the query string of your need
 var qparams = {
   q: '#emberjs, #emberJs, #emberJS, #EmberJs, #Emberjs, #EMBERJS',
   result_type: 'recent',
   lang: 'en'
 };
-
 
 // function to retweet tweets that matches my query string..
 var retweet = function() {
@@ -48,9 +52,8 @@ var retweet = function() {
   });
 }
 
-// FAVORITE BOT====================
+//Favoriting a tweet
 
-// find a random tweet and 'favorite' it
 var favoriteTweet = function(){
   // find the tweet
   Twitter.get('search/tweets', qparams, function(err,data){
@@ -103,12 +106,12 @@ var emailErrors = function(type, err) {
 
   var errorString = 'error msg: '+err.message+' | error code: '+err.code;
   mailOptions.text = errorString;
-  mailOptions.html = '<code>'+errorString+'</code>';
+  mailOptions.html = '<code style="color: red;">'+errorString+'</code>';
 
   transporter.sendMail(mailOptions, function(error, info){
     if(error){
         return console.log(error);
     }
-    console.log('Error log is mailed to gokulkathirvel@live.com - Response : ' + info.response);
+    console.log('Error log is mailed to ' +toMail+ ' - Response : ' + info.response);
   });
 }
